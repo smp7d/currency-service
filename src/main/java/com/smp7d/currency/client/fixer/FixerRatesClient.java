@@ -3,6 +3,7 @@ package com.smp7d.currency.client.fixer;
 import java.time.ZonedDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ public class FixerRatesClient implements RatesClient {
 	private RestTemplate restTemplate;
 
 	@Override
+	@Cacheable("latest-rates-cache")
 	public ExchangeRates retrieveRates(CurrencyCode code) {
 		// only using http to avoid dealing with certificates for this exercise
 		ResponseEntity<DateFormattedExchangeRates> response = restTemplate
@@ -36,6 +38,7 @@ public class FixerRatesClient implements RatesClient {
 	}
 
 	@Override
+	@Cacheable("rates-cache")
 	public ExchangeRates retrieveRates(CurrencyCode code,
 			String dayInCentralEuropeanTime) {
 		// TODO verify input format
