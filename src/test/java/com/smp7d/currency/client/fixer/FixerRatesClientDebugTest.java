@@ -1,14 +1,11 @@
 package com.smp7d.currency.client.fixer;
 
-import java.time.ZonedDateTime;
-
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.smp7d.currency.client.fixer.FixerRatesClient;
 import com.smp7d.currency.domain.CurrencyCode;
 import com.smp7d.currency.domain.ExchangeRates;
 import com.smp7d.currency.test.DebugTests;
@@ -40,8 +37,7 @@ public class FixerRatesClientDebugTest {
 		RestTemplate restTemplate = new RestTemplate();
 		client.setRestTemplate(restTemplate);
 
-		ZonedDateTime time = ZonedDateTime.parse("2004-01-02T23:00:00Z");
-		ExchangeRates rates = client.retieveRates(CurrencyCode.USD, time);
+		ExchangeRates rates = client.retieveRates(CurrencyCode.USD, "2004-01-02");
 
 		prettyPrint(rates);
 	}

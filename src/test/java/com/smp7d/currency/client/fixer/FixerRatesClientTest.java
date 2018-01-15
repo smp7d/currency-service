@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -52,17 +51,17 @@ public class FixerRatesClientTest {
 		RestTemplate stubbedRestTemplate = mock(RestTemplate.class);
 		ResponseEntity<DateFormattedExchangeRates> fakeResponseEntity = new ResponseEntity<DateFormattedExchangeRates>(
 				ratesFromService, HttpStatus.OK);
-		ZonedDateTime inputDate = ZonedDateTime.parse("2004-01-02T12:00:00Z");
-		String expectedFormattedDate = "2004-01-02";
+		
+		String date = "2004-01-02";
 		when(
 				stubbedRestTemplate.exchange(
 						FixerRatesClient.ENDPOINT_WITH_DATE, HttpMethod.GET,
 						null, DateFormattedExchangeRates.class,
-						expectedFormattedDate, code.toString())).thenReturn(
+						date, code.toString())).thenReturn(
 				fakeResponseEntity);
 		client.setRestTemplate(stubbedRestTemplate);
 
-		ExchangeRates datedRates = client.retieveRates(code, inputDate);
+		ExchangeRates datedRates = client.retieveRates(code, date);
 
 		performAssertions(ratesFromService, datedRates);
 	}
@@ -81,13 +80,13 @@ public class FixerRatesClientTest {
 		RestTemplate stubbedRestTemplate = mock(RestTemplate.class);
 		ResponseEntity<DateFormattedExchangeRates> fakeResponseEntity = new ResponseEntity<DateFormattedExchangeRates>(
 				ratesFromService, HttpStatus.OK);
-		ZonedDateTime inputDate = ZonedDateTime.parse("2004-01-01T23:00:00Z");
-		String expectedFormattedDate = "2004-01-02";
+		
+		String inputDate = "2004-01-02";
 		when(
 				stubbedRestTemplate.exchange(
 						FixerRatesClient.ENDPOINT_WITH_DATE, HttpMethod.GET,
 						null, DateFormattedExchangeRates.class,
-						expectedFormattedDate, code.toString())).thenReturn(
+						inputDate, code.toString())).thenReturn(
 				fakeResponseEntity);
 		client.setRestTemplate(stubbedRestTemplate);
 

@@ -1,6 +1,5 @@
 package com.smp7d.currency.domain;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Map;
 

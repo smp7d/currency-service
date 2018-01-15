@@ -1,7 +1,5 @@
 package com.smp7d.currency.client;
 
-import java.time.ZonedDateTime;
-
 import com.smp7d.currency.domain.CurrencyCode;
 import com.smp7d.currency.domain.ExchangeRates;
 
@@ -17,13 +15,15 @@ public interface RatesClient {
 	ExchangeRates retrieveRates(CurrencyCode code);
 
 	/**
-	 * Retrieve rates for a currency at a specified time.
+	 * Retrieve current rates for a currency for a specific day at midnight CET.
 	 * 
 	 * @param code
-	 *            the currency code
-	 * @param time
-	 *            the time for which to fetch rates
-	 * @return the current rates for the currency at that time
+	 *            the currency for which to find rates
+	 * @param dateInCentralEuropeanTime
+	 *            the date in format YYYY-MM-DD
+	 * 
+	 * @return the current rates for the currency on that day
 	 */
-	ExchangeRates retieveRates(CurrencyCode code, ZonedDateTime time);
+	ExchangeRates retieveRates(CurrencyCode code,
+			String dateInCentralEuropeanTime);
 }

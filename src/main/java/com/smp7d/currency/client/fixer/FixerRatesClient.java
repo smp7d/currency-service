@@ -1,8 +1,6 @@
 package com.smp7d.currency.client.fixer;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -36,16 +34,14 @@ public class FixerRatesClient implements RatesClient {
 	}
 
 	@Override
-	public ExchangeRates retieveRates(CurrencyCode code, ZonedDateTime time) {
-		ZonedDateTime zonedForCentralEuropeanTime = convertTime(time);
-		String formattedDay = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(
-				zonedForCentralEuropeanTime);
-
+	public ExchangeRates retieveRates(CurrencyCode code,
+			String dayInCentralEuropeanTime) {
+		// TODO verify input format
 		// only using http to avoid dealing with certificates for this exercise
 		ResponseEntity<DateFormattedExchangeRates> response = restTemplate
 				.exchange(ENDPOINT_WITH_DATE, HttpMethod.GET, null,
-						DateFormattedExchangeRates.class, formattedDay,
-						code.toString());
+						DateFormattedExchangeRates.class,
+						dayInCentralEuropeanTime, code.toString());
 
 		return convert(response.getBody());
 	}
@@ -61,10 +57,6 @@ public class FixerRatesClient implements RatesClient {
 		rates.setDate(date);
 
 		return rates;
-	}
-
-	private ZonedDateTime convertTime(ZonedDateTime time) {
-		return time.withZoneSameInstant(ZoneId.of("GMT+1"));
 	}
 
 	public void setRestTemplate(RestTemplate restTemplate) {
