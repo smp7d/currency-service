@@ -35,6 +35,39 @@ public class RatesService {
 		return formattedRates;
 	}
 
+	/**
+	 * Retrieve rates for a specific time
+	 * 
+	 * @param code
+	 *            the currency code for which to retrieve rates
+	 * @param time
+	 *            a formatted time using
+	 *            {@link java.time.format.DateTimeFormatter#ISO_ZONED_DATE_TIME}
+	 * 
+	 * @return the rates for that day
+	 */
+	public DateFormattedExchangeRates retrieveRates(CurrencyCode code,
+			String time) {
+		ZonedDateTime zonedForCentralEuropeanTime = convertTime(ZonedDateTime
+				.parse(time));
+		String formattedDay = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(
+				zonedForCentralEuropeanTime);
+		ExchangeRates retrievedRates = client.retrieveRates(code, formattedDay);
+		DateFormattedExchangeRates formattedRates = new DateFormattedExchangeRates();
+		formattedRates.setBase(retrievedRates.getBase());
+		formattedRates.setRates(retrievedRates.getRates());
+		formattedRates.setDate(retrievedRates.getDate().toString());
+
+		return formattedRates;
+	}
+
+	/**
+	 * Convert to CET
+	 */
+	private ZonedDateTime convertTime(ZonedDateTime time) {
+		return time.withZoneSameInstant(ZoneId.of("GMT+1"));
+	}
+
 	public void setClient(RatesClient client) {
 		this.client = client;
 	}
