@@ -27,10 +27,7 @@ public class RatesService {
 	public DateFormattedExchangeRates retrieveLatestRates(String code) {
 		ExchangeRates retrievedRates = client.retrieveRates(CurrencyCode
 				.valueOf(code));
-		DateFormattedExchangeRates formattedRates = new DateFormattedExchangeRates();
-		formattedRates.setBase(retrievedRates.getBase());
-		formattedRates.setRates(retrievedRates.getRates());
-		formattedRates.setDate(retrievedRates.getDate().toString());
+		DateFormattedExchangeRates formattedRates = convertToDateFormatted(retrievedRates);
 
 		return formattedRates;
 	}
@@ -53,11 +50,17 @@ public class RatesService {
 				zonedForCentralEuropeanTime);
 		ExchangeRates retrievedRates = client.retrieveRates(
 				CurrencyCode.valueOf(code), formattedDay);
+		DateFormattedExchangeRates formattedRates = convertToDateFormatted(retrievedRates);
+
+		return formattedRates;
+	}
+
+	private DateFormattedExchangeRates convertToDateFormatted(
+			ExchangeRates retrievedRates) {
 		DateFormattedExchangeRates formattedRates = new DateFormattedExchangeRates();
 		formattedRates.setBase(retrievedRates.getBase());
 		formattedRates.setRates(retrievedRates.getRates());
 		formattedRates.setDate(retrievedRates.getDate().toString());
-
 		return formattedRates;
 	}
 
