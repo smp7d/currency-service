@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.smp7d.currency.client.RatesClient;
@@ -16,6 +17,7 @@ import com.smp7d.currency.domain.ExchangeRates;
  * Rates client implementation which utilizes Fixer.io
  *
  */
+@Component
 public class FixerRatesClient implements RatesClient {
 	// TODO dry up these endpoints and configure them
 	static final String ENDPOINT_NO_DATE = "http://api.fixer.io/latest?base={code}";
