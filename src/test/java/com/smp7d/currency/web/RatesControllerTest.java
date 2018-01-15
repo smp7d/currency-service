@@ -6,6 +6,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 
@@ -21,9 +23,10 @@ public class RatesControllerTest {
 		controller.setService(stubbedService);
 		String base = RandomStringUtils.randomAlphabetic(3);
 		DateFormattedExchangeRates fakeRates = new DateFormattedExchangeRates();
-		when(stubbedService.retrieveLatestRates(base)).thenReturn(fakeRates);
+		when(stubbedService.retrieveLatestRates(base, Optional.empty()))
+				.thenReturn(fakeRates);
 
-		DateFormattedExchangeRates result = controller.load(base, null);
+		DateFormattedExchangeRates result = controller.load(base, null, null);
 
 		assertThat(result, is(sameInstance(fakeRates)));
 	}
@@ -36,9 +39,10 @@ public class RatesControllerTest {
 		String base = RandomStringUtils.randomAlphabetic(3);
 		String time = RandomStringUtils.randomAlphabetic(10);
 		DateFormattedExchangeRates fakeRates = new DateFormattedExchangeRates();
-		when(stubbedService.retrieveRates(base, time)).thenReturn(fakeRates);
+		when(stubbedService.retrieveRates(base, time, Optional.empty()))
+				.thenReturn(fakeRates);
 
-		DateFormattedExchangeRates result = controller.load(base, time);
+		DateFormattedExchangeRates result = controller.load(base, time, null);
 
 		assertThat(result, is(sameInstance(fakeRates)));
 	}

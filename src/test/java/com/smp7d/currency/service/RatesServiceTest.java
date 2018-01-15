@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.junit.Test;
 
@@ -28,9 +29,30 @@ public class RatesServiceTest {
 		service.setClient(stubbedClient);
 
 		DateFormattedExchangeRates resultingRates = service
-				.retrieveLatestRates(code.toString());
+				.retrieveLatestRates(code.toString(), Optional.empty());
 
-		performAssertions(fakeRates, resultingRates);
+		performStandardAssertions(fakeRates, resultingRates);
+	}
+
+	@Test
+	public void testRetrieveLatestRatesWhenTarget() {
+		RatesService service = new RatesService();
+		RatesClient stubbedClient = mock(RatesClient.class);
+		CurrencyCode code = CurrencyCode.AUD;
+		ExchangeRates fakeRates = fakeRates();
+		when(stubbedClient.retrieveRates(code)).thenReturn(fakeRates);
+		service.setClient(stubbedClient);
+
+		CurrencyCode targetCode = CurrencyCode.USD;
+		DateFormattedExchangeRates resultingRates = service
+				.retrieveLatestRates(code.toString(),
+						Optional.of(targetCode.toString()));
+
+		assertThat(resultingRates.getBase(), is(fakeRates.getBase()));
+		assertThat(resultingRates.getRates().size(), is(1));
+		assertThat(resultingRates.getRates().get(targetCode), is(fakeRates
+				.getRates().get(targetCode)));
+		assertThat(resultingRates.getDate(), is(fakeRates.getDate().toString()));
 	}
 
 	@Test
@@ -44,9 +66,30 @@ public class RatesServiceTest {
 		service.setClient(stubbedClient);
 
 		DateFormattedExchangeRates resultingRates = service.retrieveRates(
-				code.toString(), "2004-01-01T12:00:00Z");
+				code.toString(), "2004-01-01T12:00:00Z", Optional.empty());
 
-		performAssertions(fakeRates, resultingRates);
+		performStandardAssertions(fakeRates, resultingRates);
+	}
+	
+	@Test
+	public void testRetrieveLatestRatesForDayWhenTarget() {
+		RatesService service = new RatesService();
+		RatesClient stubbedClient = mock(RatesClient.class);
+		CurrencyCode code = CurrencyCode.AUD;
+		ExchangeRates fakeRates = fakeRates();
+		when(stubbedClient.retrieveRates(code, "2004-01-01")).thenReturn(
+				fakeRates);
+		service.setClient(stubbedClient);
+		CurrencyCode targetCode = CurrencyCode.USD;
+
+		DateFormattedExchangeRates resultingRates = service.retrieveRates(
+				code.toString(), "2004-01-01T12:00:00Z", Optional.of(targetCode.toString()));
+
+		assertThat(resultingRates.getBase(), is(fakeRates.getBase()));
+		assertThat(resultingRates.getRates().size(), is(1));
+		assertThat(resultingRates.getRates().get(targetCode), is(fakeRates
+				.getRates().get(targetCode)));
+		assertThat(resultingRates.getDate(), is(fakeRates.getDate().toString()));
 	}
 
 	@Test
@@ -60,12 +103,12 @@ public class RatesServiceTest {
 		service.setClient(stubbedClient);
 
 		DateFormattedExchangeRates resultingRates = service.retrieveRates(
-				code.toString(), "2004-01-01T23:00:00Z");
+				code.toString(), "2004-01-01T23:00:00Z", Optional.empty());
 
-		performAssertions(fakeRates, resultingRates);
+		performStandardAssertions(fakeRates, resultingRates);
 	}
 
-	private void performAssertions(ExchangeRates fakeRates,
+	private void performStandardAssertions(ExchangeRates fakeRates,
 			DateFormattedExchangeRates resultingRates) {
 		assertThat(resultingRates.getBase(), is(fakeRates.getBase()));
 		assertThat(resultingRates.getRates(),
@@ -77,7 +120,10 @@ public class RatesServiceTest {
 		ExchangeRates exchangeRates = new ExchangeRates();
 		exchangeRates.setBase(CurrencyCode.BGN);
 		exchangeRates.setDate(ZonedDateTime.parse("2004-01-01T23:00:00Z"));
-		exchangeRates.setRates(new HashMap<CurrencyCode, Float>());
+		HashMap<CurrencyCode, Float> rates = new HashMap<CurrencyCode, Float>();
+		rates.put(CurrencyCode.USD, 1.0f);
+		rates.put(CurrencyCode.EUR, 2.0f);
+		exchangeRates.setRates(rates);
 
 		return exchangeRates;
 	}

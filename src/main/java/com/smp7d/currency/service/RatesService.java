@@ -3,6 +3,9 @@ package com.smp7d.currency.service;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,12 +25,21 @@ public class RatesService {
 	 * 
 	 * @param code
 	 *            the currency code for which to retrieve rates
+	 * @param targetFilter
+	 *            the code for which we want the target rate, if not supplied
+	 *            will provide all rates
+	 * 
 	 * @return the rates
 	 */
-	public DateFormattedExchangeRates retrieveLatestRates(String code) {
+	public DateFormattedExchangeRates retrieveLatestRates(String code,
+			Optional<String> targetFilter) {
 		ExchangeRates retrievedRates = client.retrieveRates(CurrencyCode
 				.valueOf(code));
 		DateFormattedExchangeRates formattedRates = convertToDateFormatted(retrievedRates);
+
+		if (targetFilter.isPresent()) {
+			filter(formattedRates, targetFilter.get());
+		}
 
 		return formattedRates;
 	}
@@ -40,10 +52,14 @@ public class RatesService {
 	 * @param time
 	 *            a formatted time using
 	 *            {@link java.time.format.DateTimeFormatter#ISO_ZONED_DATE_TIME}
+	 * @param targetFilter
+	 *            the code for which we want the target rate, if not supplied
+	 *            will provide all rates
 	 * 
 	 * @return the rates for that day
 	 */
-	public DateFormattedExchangeRates retrieveRates(String code, String time) {
+	public DateFormattedExchangeRates retrieveRates(String code, String time,
+			Optional<String> targetFilter) {
 		ZonedDateTime zonedForCentralEuropeanTime = convertTime(ZonedDateTime
 				.parse(time));
 		String formattedDay = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(
@@ -52,6 +68,10 @@ public class RatesService {
 				CurrencyCode.valueOf(code), formattedDay);
 		DateFormattedExchangeRates formattedRates = convertToDateFormatted(retrievedRates);
 
+		if (targetFilter.isPresent()) {
+			filter(formattedRates, targetFilter.get());
+		}
+		
 		return formattedRates;
 	}
 
@@ -62,6 +82,20 @@ public class RatesService {
 		formattedRates.setRates(retrievedRates.getRates());
 		formattedRates.setDate(retrievedRates.getDate().toString());
 		return formattedRates;
+	}
+
+	private void filter(DateFormattedExchangeRates formattedRates,
+			String targetFilter) {
+		Map<CurrencyCode, Float> filtered = new HashMap<CurrencyCode, Float>();
+		CurrencyCode targetCode = CurrencyCode.valueOf(targetFilter);
+		Float targetRate = formattedRates.getRates().get(targetCode);
+		if (targetCode == null) {
+			// TODO create a custom exception for this sort of logic
+			throw new RuntimeException("Could not find rate for target: "
+					+ targetFilter);
+		}
+		filtered.put(targetCode, targetRate);
+		formattedRates.setRates(filtered);
 	}
 
 	/**
