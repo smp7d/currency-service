@@ -42,7 +42,7 @@ public class FixerRatesClientTest {
 	}
 
 	@Test
-	public void testRetrieveRatesForSameDayTimezone() {
+	public void testRetrieveRatesForDay() {
 		FixerRatesClient client = new FixerRatesClient();
 
 		CurrencyCode code = CurrencyCode.USD;
@@ -62,35 +62,6 @@ public class FixerRatesClientTest {
 		client.setRestTemplate(stubbedRestTemplate);
 
 		ExchangeRates datedRates = client.retrieveRates(code, date);
-
-		performAssertions(ratesFromService, datedRates);
-	}
-
-	/**
-	 * Example would be if we check for 11PM UTC which is actually next day in
-	 * Central European time so needs to call Fixer.io for that day instead
-	 */
-	@Test
-	public void testRetrieveRatesForDifferentDayTimezone() {
-		FixerRatesClient client = new FixerRatesClient();
-
-		CurrencyCode code = CurrencyCode.USD;
-		DateFormattedExchangeRates ratesFromService = fakeFormattedDateRates();
-
-		RestTemplate stubbedRestTemplate = mock(RestTemplate.class);
-		ResponseEntity<DateFormattedExchangeRates> fakeResponseEntity = new ResponseEntity<DateFormattedExchangeRates>(
-				ratesFromService, HttpStatus.OK);
-		
-		String inputDate = "2004-01-02";
-		when(
-				stubbedRestTemplate.exchange(
-						FixerRatesClient.ENDPOINT_WITH_DATE, HttpMethod.GET,
-						null, DateFormattedExchangeRates.class,
-						inputDate, code.toString())).thenReturn(
-				fakeResponseEntity);
-		client.setRestTemplate(stubbedRestTemplate);
-
-		ExchangeRates datedRates = client.retrieveRates(code, inputDate);
 
 		performAssertions(ratesFromService, datedRates);
 	}
