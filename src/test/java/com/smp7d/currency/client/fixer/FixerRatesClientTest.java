@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -38,18 +39,77 @@ public class FixerRatesClientTest {
 
 		ExchangeRates datedRates = client.retieveRates(code);
 
-		assertThat(datedRates.getBase(), is(ratesFromService.getBase()));
-		assertThat(datedRates.getRates(),
+		performAssertions(ratesFromService, datedRates);
+	}
+
+	@Test
+	public void testRetrieveRatesForSameDayTimezone() {
+		FixerRatesClient client = new FixerRatesClient();
+
+		CurrencyCode code = CurrencyCode.USD;
+		DateFormattedExchangeRates ratesFromService = fakeFormattedDateRates();
+
+		RestTemplate stubbedRestTemplate = mock(RestTemplate.class);
+		ResponseEntity<DateFormattedExchangeRates> fakeResponseEntity = new ResponseEntity<DateFormattedExchangeRates>(
+				ratesFromService, HttpStatus.OK);
+		ZonedDateTime inputDate = ZonedDateTime.parse("2004-01-02T12:00:00Z");
+		String expectedFormattedDate = "2004-01-02";
+		when(
+				stubbedRestTemplate.exchange(
+						FixerRatesClient.ENDPOINT_WITH_DATE, HttpMethod.GET,
+						null, DateFormattedExchangeRates.class,
+						expectedFormattedDate, code.toString())).thenReturn(
+				fakeResponseEntity);
+		client.setRestTemplate(stubbedRestTemplate);
+
+		ExchangeRates datedRates = client.retieveRates(code, inputDate);
+
+		performAssertions(ratesFromService, datedRates);
+	}
+
+	/**
+	 * Example would be if we check for 11PM UTC which is actually next day in
+	 * Central European time so needs to call Fixer.io for that day instead
+	 */
+	@Test
+	public void testRetrieveRatesForDifferentDayTimezone() {
+		FixerRatesClient client = new FixerRatesClient();
+
+		CurrencyCode code = CurrencyCode.USD;
+		DateFormattedExchangeRates ratesFromService = fakeFormattedDateRates();
+
+		RestTemplate stubbedRestTemplate = mock(RestTemplate.class);
+		ResponseEntity<DateFormattedExchangeRates> fakeResponseEntity = new ResponseEntity<DateFormattedExchangeRates>(
+				ratesFromService, HttpStatus.OK);
+		ZonedDateTime inputDate = ZonedDateTime.parse("2004-01-01T23:00:00Z");
+		String expectedFormattedDate = "2004-01-02";
+		when(
+				stubbedRestTemplate.exchange(
+						FixerRatesClient.ENDPOINT_WITH_DATE, HttpMethod.GET,
+						null, DateFormattedExchangeRates.class,
+						expectedFormattedDate, code.toString())).thenReturn(
+				fakeResponseEntity);
+		client.setRestTemplate(stubbedRestTemplate);
+
+		ExchangeRates datedRates = client.retieveRates(code, inputDate);
+
+		performAssertions(ratesFromService, datedRates);
+	}
+
+	private void performAssertions(DateFormattedExchangeRates ratesFromService,
+			ExchangeRates foundRates) {
+		assertThat(foundRates.getBase(), is(ratesFromService.getBase()));
+		assertThat(foundRates.getRates(),
 				is(sameInstance(ratesFromService.getRates())));
-		assertThat(datedRates.getDate().getHour(), is(0));
-		assertThat(datedRates.getDate().getMinute(), is(0));
-		assertThat(datedRates.getDate().getSecond(), is(0));
-		assertThat(datedRates.getDate().getNano(), is(0));
-		assertThat(datedRates.getDate().getDayOfMonth(),
+		assertThat(foundRates.getDate().getHour(), is(0));
+		assertThat(foundRates.getDate().getMinute(), is(0));
+		assertThat(foundRates.getDate().getSecond(), is(0));
+		assertThat(foundRates.getDate().getNano(), is(0));
+		assertThat(foundRates.getDate().getDayOfMonth(),
 				is(extractDay(ratesFromService.getDate())));
-		assertThat(datedRates.getDate().getYear(),
+		assertThat(foundRates.getDate().getYear(),
 				is(extractYear(ratesFromService.getDate())));
-		assertThat(datedRates.getDate().getMonth().getValue(),
+		assertThat(foundRates.getDate().getMonth().getValue(),
 				is(extractMonth(ratesFromService.getDate())));
 	}
 
