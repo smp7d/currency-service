@@ -14,7 +14,7 @@ public interface RatesClient {
 	 *            the currency code
 	 * @return the current rates for the currency
 	 */
-	ExchangeRates retieveRates(CurrencyCode code);
+	ExchangeRates retrieveRates(CurrencyCode code);
 
 	/**
 	 * Retrieve rates for a currency at a specified time.

@@ -26,7 +26,7 @@ public class FixerRatesClient implements RatesClient {
 	private RestTemplate restTemplate;
 
 	@Override
-	public ExchangeRates retieveRates(CurrencyCode code) {
+	public ExchangeRates retrieveRates(CurrencyCode code) {
 		// only using http to avoid dealing with certificates for this exercise
 		ResponseEntity<DateFormattedExchangeRates> response = restTemplate
 				.exchange(ENDPOINT_NO_DATE, HttpMethod.GET, null,
