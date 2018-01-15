@@ -46,13 +46,13 @@ public class RatesService {
 	 * 
 	 * @return the rates for that day
 	 */
-	public DateFormattedExchangeRates retrieveRates(CurrencyCode code,
-			String time) {
+	public DateFormattedExchangeRates retrieveRates(String code, String time) {
 		ZonedDateTime zonedForCentralEuropeanTime = convertTime(ZonedDateTime
 				.parse(time));
 		String formattedDay = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(
 				zonedForCentralEuropeanTime);
-		ExchangeRates retrievedRates = client.retrieveRates(code, formattedDay);
+		ExchangeRates retrievedRates = client.retrieveRates(
+				CurrencyCode.valueOf(code), formattedDay);
 		DateFormattedExchangeRates formattedRates = new DateFormattedExchangeRates();
 		formattedRates.setBase(retrievedRates.getBase());
 		formattedRates.setRates(retrievedRates.getRates());

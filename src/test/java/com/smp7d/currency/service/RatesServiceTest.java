@@ -32,33 +32,35 @@ public class RatesServiceTest {
 
 		performAssertions(fakeRates, resultingRates);
 	}
-	
+
 	@Test
 	public void testRetrieveLatestRatesForDay() {
 		RatesService service = new RatesService();
 		RatesClient stubbedClient = mock(RatesClient.class);
 		CurrencyCode code = CurrencyCode.AUD;
 		ExchangeRates fakeRates = fakeRates();
-		when(stubbedClient.retrieveRates(code, "2004-01-01")).thenReturn(fakeRates);
+		when(stubbedClient.retrieveRates(code, "2004-01-01")).thenReturn(
+				fakeRates);
 		service.setClient(stubbedClient);
 
-		DateFormattedExchangeRates resultingRates = service
-				.retrieveRates(code, "2004-01-01T12:00:00Z");
+		DateFormattedExchangeRates resultingRates = service.retrieveRates(
+				code.toString(), "2004-01-01T12:00:00Z");
 
 		performAssertions(fakeRates, resultingRates);
 	}
-	
+
 	@Test
 	public void testRetrieveLatestRatesForDayWhenConversionChangesDay() {
 		RatesService service = new RatesService();
 		RatesClient stubbedClient = mock(RatesClient.class);
 		CurrencyCode code = CurrencyCode.AUD;
 		ExchangeRates fakeRates = fakeRates();
-		when(stubbedClient.retrieveRates(code, "2004-01-02")).thenReturn(fakeRates);
+		when(stubbedClient.retrieveRates(code, "2004-01-02")).thenReturn(
+				fakeRates);
 		service.setClient(stubbedClient);
 
-		DateFormattedExchangeRates resultingRates = service
-				.retrieveRates(code, "2004-01-01T23:00:00Z");
+		DateFormattedExchangeRates resultingRates = service.retrieveRates(
+				code.toString(), "2004-01-01T23:00:00Z");
 
 		performAssertions(fakeRates, resultingRates);
 	}
