@@ -1,16 +1,17 @@
 package com.smp7d.currency.domain;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Map;
 
 /**
- * A "set" of exchange rates for a particular currency
+ * Exchange rates with DateFormatted. Used for simpler
+ * serialization/deserialization. Can probably add custom serialization where
+ * needed as an alternative.
  *
  */
-public class ExchangeRates {
+public class DateFormattedExchangeRates {
+
 	private String base;
-	private ZonedDateTime date;
+	private String date;
 	private Map<CurrencyCode, Float> rates;
 
 	public String getBase() {
@@ -21,11 +22,11 @@ public class ExchangeRates {
 		this.base = base;
 	}
 
-	public ZonedDateTime getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(ZonedDateTime date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
