@@ -1,4 +1,4 @@
-package com.smp7d.currency.application;
+package com.smp7d.currency;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package com.smp7d.currency.application;
+package com.smp7d.currency;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
