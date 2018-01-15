@@ -1,0 +1,84 @@
+package com.smp7d.currency.client.fixer;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+
+import org.junit.Test;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import com.smp7d.currency.domain.CurrencyCode;
+import com.smp7d.currency.domain.DateFormattedExchangeRates;
+import com.smp7d.currency.domain.ExchangeRates;
+
+public class FixerRatesClientTest {
+
+	@Test
+	public void testRetrieveRates() {
+		FixerRatesClient client = new FixerRatesClient();
+
+		CurrencyCode code = CurrencyCode.USD;
+		DateFormattedExchangeRates ratesFromService = fakeFormattedDateRates();
+
+		RestTemplate stubbedRestTemplate = mock(RestTemplate.class);
+		ResponseEntity<DateFormattedExchangeRates> fakeResponseEntity = new ResponseEntity<DateFormattedExchangeRates>(
+				ratesFromService, HttpStatus.OK);
+		when(
+				stubbedRestTemplate.exchange(FixerRatesClient.ENDPOINT_NO_DATE,
+						HttpMethod.GET, null, DateFormattedExchangeRates.class,
+						code.toString())).thenReturn(fakeResponseEntity);
+		client.setRestTemplate(stubbedRestTemplate);
+
+		ExchangeRates datedRates = client.retieveRates(code);
+
+		assertThat(datedRates.getBase(), is(ratesFromService.getBase()));
+		assertThat(datedRates.getRates(),
+				is(sameInstance(ratesFromService.getRates())));
+		assertThat(datedRates.getDate().getHour(), is(0));
+		assertThat(datedRates.getDate().getMinute(), is(0));
+		assertThat(datedRates.getDate().getSecond(), is(0));
+		assertThat(datedRates.getDate().getNano(), is(0));
+		assertThat(datedRates.getDate().getDayOfMonth(),
+				is(extractDay(ratesFromService.getDate())));
+		assertThat(datedRates.getDate().getYear(),
+				is(extractYear(ratesFromService.getDate())));
+		assertThat(datedRates.getDate().getMonth().getValue(),
+				is(extractMonth(ratesFromService.getDate())));
+	}
+
+	private int extractMonth(String date) {
+		// TODO should find a better way of working with dates when we have
+		// more...time
+		return Integer.parseInt(date.substring(5, 7));
+	}
+
+	private int extractYear(String date) {
+		// TODO should find a better way of working with dates when we have
+		// more...time
+		return Integer.parseInt(date.substring(0, 4));
+	}
+
+	private int extractDay(String date) {
+		// TODO should find a better way of working with dates when we have
+		// more...time
+		return Integer.parseInt(date.substring(8, 10));
+	}
+
+	private DateFormattedExchangeRates fakeFormattedDateRates() {
+		DateFormattedExchangeRates rates = new DateFormattedExchangeRates();
+		rates.setBase(CurrencyCode.USD.toString());
+		HashMap<CurrencyCode, Float> exchangeRates = new HashMap<CurrencyCode, Float>();
+		exchangeRates.put(CurrencyCode.EUR, .81234f);
+		rates.setRates(exchangeRates);
+		rates.setDate("2017-01-02");
+
+		return rates;
+	}
+}
