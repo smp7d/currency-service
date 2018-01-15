@@ -9,15 +9,15 @@ import java.util.Map;
  *
  */
 public class ExchangeRates {
-	private String base;
+	private CurrencyCode base;
 	private ZonedDateTime date;
 	private Map<CurrencyCode, Float> rates;
 
-	public String getBase() {
+	public CurrencyCode getBase() {
 		return base;
 	}
 
-	public void setBase(String base) {
+	public void setBase(CurrencyCode base) {
 		this.base = base;
 	}
 

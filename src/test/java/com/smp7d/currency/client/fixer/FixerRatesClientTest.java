@@ -133,7 +133,7 @@ public class FixerRatesClientTest {
 
 	private DateFormattedExchangeRates fakeFormattedDateRates() {
 		DateFormattedExchangeRates rates = new DateFormattedExchangeRates();
-		rates.setBase(CurrencyCode.USD.toString());
+		rates.setBase(CurrencyCode.USD);
 		HashMap<CurrencyCode, Float> exchangeRates = new HashMap<CurrencyCode, Float>();
 		exchangeRates.put(CurrencyCode.EUR, .81234f);
 		rates.setRates(exchangeRates);

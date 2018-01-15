@@ -10,15 +10,15 @@ import java.util.Map;
  */
 public class DateFormattedExchangeRates {
 
-	private String base;
+	private CurrencyCode base;
 	private String date;
 	private Map<CurrencyCode, Float> rates;
 
-	public String getBase() {
+	public CurrencyCode getBase() {
 		return base;
 	}
 
-	public void setBase(String base) {
+	public void setBase(CurrencyCode base) {
 		this.base = base;
 	}
 
