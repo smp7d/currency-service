@@ -13,11 +13,19 @@ public class RatesController {
 	@Autowired
 	private RatesService service;
 
-	// TODO add documentation for this API endpoint
+	// TODO add API documentation for this API endpoint
 	@RequestMapping("/rates")
-	public DateFormattedExchangeRates loadLatest(
-			@RequestParam("base") String base) {
+	public DateFormattedExchangeRates load(
+			@RequestParam("base") String base,
+			@RequestParam(value = "timestamp", required = false) String date) {
+		if (date != null) {
+			return service.retrieveRates(base, date);
+		}
 		return service.retrieveLatestRates(base);
+	}
+
+	public void setService(RatesService service) {
+		this.service = service;
 	}
 
 }
