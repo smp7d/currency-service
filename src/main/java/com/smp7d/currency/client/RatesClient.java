@@ -24,6 +24,6 @@ public interface RatesClient {
 	 * 
 	 * @return the current rates for the currency on that day
 	 */
-	ExchangeRates retieveRates(CurrencyCode code,
+	ExchangeRates retrieveRates(CurrencyCode code,
 			String dateInCentralEuropeanTime);
 }

@@ -61,7 +61,7 @@ public class FixerRatesClientTest {
 				fakeResponseEntity);
 		client.setRestTemplate(stubbedRestTemplate);
 
-		ExchangeRates datedRates = client.retieveRates(code, date);
+		ExchangeRates datedRates = client.retrieveRates(code, date);
 
 		performAssertions(ratesFromService, datedRates);
 	}
@@ -90,7 +90,7 @@ public class FixerRatesClientTest {
 				fakeResponseEntity);
 		client.setRestTemplate(stubbedRestTemplate);
 
-		ExchangeRates datedRates = client.retieveRates(code, inputDate);
+		ExchangeRates datedRates = client.retrieveRates(code, inputDate);
 
 		performAssertions(ratesFromService, datedRates);
 	}

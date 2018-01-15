@@ -34,7 +34,7 @@ public class FixerRatesClient implements RatesClient {
 	}
 
 	@Override
-	public ExchangeRates retieveRates(CurrencyCode code,
+	public ExchangeRates retrieveRates(CurrencyCode code,
 			String dayInCentralEuropeanTime) {
 		// TODO verify input format
 		// only using http to avoid dealing with certificates for this exercise

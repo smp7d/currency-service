@@ -37,7 +37,7 @@ public class FixerRatesClientDebugTest {
 		RestTemplate restTemplate = new RestTemplate();
 		client.setRestTemplate(restTemplate);
 
-		ExchangeRates rates = client.retieveRates(CurrencyCode.USD, "2004-01-02");
+		ExchangeRates rates = client.retrieveRates(CurrencyCode.USD, "2004-01-02");
 
 		prettyPrint(rates);
 	}
