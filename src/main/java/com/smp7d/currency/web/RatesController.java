@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +17,7 @@ public class RatesController {
 	private RatesService service;
 
 	// TODO add API documentation for this API endpoint
-	@RequestMapping("/rates")
+	@RequestMapping(value="/rates", method = RequestMethod.GET)
 	public DateFormattedExchangeRates load(@RequestParam("base") String base,
 			@RequestParam(value = "timestamp", required = false) String date,
 			@RequestParam(value = "target", required = false) String target) {
