@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.smp7d.currency.CacheConfig;
 import com.smp7d.currency.client.RatesClient;
 import com.smp7d.currency.domain.CurrencyCode;
 import com.smp7d.currency.domain.DateFormattedExchangeRates;
@@ -27,7 +28,7 @@ public class FixerRatesClient implements RatesClient {
 	private RestTemplate restTemplate;
 
 	@Override
-	@Cacheable("latest-rates-cache")
+	@Cacheable(CacheConfig.LATEST_CACHE)
 	public ExchangeRates retrieveRates(CurrencyCode code) {
 		// only using http to avoid dealing with certificates for this exercise
 		ResponseEntity<DateFormattedExchangeRates> response = restTemplate
@@ -38,7 +39,7 @@ public class FixerRatesClient implements RatesClient {
 	}
 
 	@Override
-	@Cacheable("rates-cache")
+	@Cacheable(CacheConfig.HISTORICAL_CACHE)
 	public ExchangeRates retrieveRates(CurrencyCode code,
 			String dayInCentralEuropeanTime) {
 		// TODO verify input format
